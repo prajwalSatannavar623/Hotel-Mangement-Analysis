@@ -1,0 +1,1 @@
+from .text_aspects_service import extract_aspects
