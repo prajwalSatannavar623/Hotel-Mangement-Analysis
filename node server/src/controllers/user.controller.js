@@ -40,7 +40,7 @@ const getReviewAnalysis = asyncHandler(async (req, res) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         review: review,
-        photos: photoUrls,
+        photoUrls: photoUrls,
       }),
     });
   } catch (networkError) {
