@@ -22,7 +22,7 @@ const userSchema = new Schema(
       type: String,
     },
 
-    passwordHash: {
+    password: {
       type: String,
       select: false,
     },
@@ -40,9 +40,14 @@ const userSchema = new Schema(
   { timestamps: true },
 );
 
-userSchema.methods.isPasswordCorrect = async (password) => {
-  const isMatch = await bcrypt.compare(password, this.passwordHash);
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+  this.password = await bcrypt.hash(this.password, 12);
+});
+
+userSchema.methods.isPasswordCorrect = async function (password) {
+  const isMatch = await bcrypt.compare(password, this.password);
   return isMatch;
 };
 
-export default User = mongoose.model("User", userSchema);
+export const User = mongoose.model("User", userSchema);

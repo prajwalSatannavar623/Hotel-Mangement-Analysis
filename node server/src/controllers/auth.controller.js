@@ -1,29 +1,41 @@
-import { asyncHandler } from "../utils/asyncHandler";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
-import bcrypt from "bcrypt";
+import { passport } from "../config/passport.js";
+import { User } from "../models/user.model.js";
+
+// utility functions:
+function sanitizeUser(user) {
+  return {
+    id: user._id,
+    email: user.email,
+    name: user.name,
+    avatarUrl: user.avatarUrl,
+  };
+}
 
 // register
 const registerUser = asyncHandler(async (req, res, next) => {
+  console.log("Entered registerUser");
   const { email, password, fullName } = req.body;
 
   if (!email || !password || !fullName) {
     throw new ApiError(400, "Email and password are required");
   }
 
-  if (password.length < 8) {
-    throw new ApiError(400, "Password must be at least 8 characters");
-  }
+  // if (password.length < 8) {
+  //   throw new ApiError(400, "Password must be at least 8 characters");
+  // }
 
-  const existing = await User.findOne({ email: email.toLowerCase() });
-  if (existing) {
+  const existingUser = await User.findOne({ email: email.toLowerCase() });
+
+  if (existingUser) {
     throw new ApiError(409, "Email already registered");
   }
 
-  const passwordHash = await bcrypt.hash(password, 12);
   const user = await User.create({
     email: email.toLowerCase(),
-    passwordHash,
+    password,
     fullName,
   });
 
@@ -48,7 +60,9 @@ const registerUser = asyncHandler(async (req, res, next) => {
 const loginUser = asyncHandler(async (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
-      return next(new ApiError(500, "Internal authentication error"));
+      return next(
+        new ApiError(500, err?.message || "Internal authentication error"),
+      );
     }
 
     if (!user) {
@@ -60,9 +74,10 @@ const loginUser = asyncHandler(async (req, res, next) => {
     req.login(user, (loginErr) => {
       if (loginErr) {
         return next(
-          new ApiError(500, "Session creation failed during login", [
-            loginErr.message,
-          ]),
+          new ApiError(
+            500,
+            loginErr?.message || "Session creation failed during login",
+          ),
         );
       }
 
@@ -89,13 +104,12 @@ const handleGoogleCallback = asyncHandler(async (req, res, next) => {
   passport.authenticate("google", (err, user, info) => {
     if (err) {
       return next(
-        new ApiError(500, "Google authentication failed", [err.message]),
+        new ApiError(500, err?.message || "Google authentication failed"),
       );
     }
 
     if (!user) {
-      // You can either redirect to a frontend error page or throw an ApiError
-      return res.redirect("/login-failed");
+      return next(new ApiError(401, info?.message || "Login failed!"));
     }
 
     // Log the user in to establish the session
@@ -108,21 +122,58 @@ const handleGoogleCallback = asyncHandler(async (req, res, next) => {
         );
       }
 
-      return res.redirect("/");
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { user: sanitizeUser(user) },
+            "User logged in successfully",
+          ),
+        );
     });
   })(req, res, next);
 });
 
-// login-failed
-const handleLoginFailed = (req, res) => {
-  // You can return an ApiError/ApiResponse here, or redirect to your frontend error page
-  res.status(401).json({ error: "Google authentication failed" });
-};
+// logout
+const logoutUser = asyncHandler(async (req, res, next) => {
+  // Tell Passport to unbind the user object from req
+  req.logout((err) => {
+    if (err) {
+      return next(
+        new ApiError(500, "Something went wrong while logging out", [
+          err.message,
+        ]),
+      );
+    }
+
+    // Completely destroy the session in MongoDB Atlas
+    req.session.destroy((destroyErr) => {
+      if (destroyErr) {
+        return next(
+          new ApiError(500, "Failed to destroy session in database", [
+            destroyErr.message,
+          ]),
+        );
+      }
+
+      // Tell the browser to wipe the session cookie immediately
+      res.clearCookie("connect.sid", {
+        httpOnly: true,
+        secure: process.env.MODE === "production",
+      });
+
+      return res
+        .status(200)
+        .json(new ApiResponse(200, {}, "User logged out successfully"));
+    });
+  });
+});
 
 export {
   registerUser,
   loginUser,
   handleGoogleCallback,
   initiateGoogleAuth,
-  handleLoginFailed,
+  logoutUser,
 };

@@ -23,4 +23,4 @@ const inputSchema = new Schema(
   { timestamps: true },
 );
 
-export default Input = mongoose.model("Input", inputSchema);
+export const Input = mongoose.model("Input", inputSchema);
