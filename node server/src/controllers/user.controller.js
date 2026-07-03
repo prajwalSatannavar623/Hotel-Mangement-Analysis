@@ -29,26 +29,43 @@ const getReviewAnalysis = asyncHandler(async (req, res) => {
 
   // fastApi server call:
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000);
+  // one minute window
+  const timeoutId = setTimeout(() => controller.abort(), 60000);
 
-  const fastApiModelResponse = await fetch(process.env.FASTAPI_SERVER_URL, {
-    method: "POST",
-    signal: controller.signal,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      review: review,
-      photoUrls: photoUrls,
-    }),
-  });
+  let fastApiModelResponse;
+
+  try {
+    fastApiModelResponse = await fetch(process.env.FASTAPI_SERVER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        review: review,
+        photos: photoUrls,
+      }),
+    });
+  } catch (networkError) {
+    // network error
+    throw new ApiError(
+      503,
+      networkError?.message ||
+        "AI analysis microservice is currently unreachable or offline",
+    );
+  }
   clearTimeout(timeoutId);
 
+  // error handling
   if (!fastApiModelResponse.ok) {
-    // const errorData = await fastApiResponse.json().catch(() => null);
-    throw new ApiError(502, "Failed to fetch analysis from AI server");
+    const errorData = await fastApiModelResponse.json().catch(() => null);
+
+    const errorMessage =
+      errorData?.detail ||
+      errorData?.message ||
+      `AI Service failed with status: ${fastApiModelResponse.status}`;
+
+    throw new ApiError(fastApiModelResponse.status, errorMessage);
   }
 
+  // success
   const analysisResult = await fastApiModelResponse.json();
 
   return res
@@ -56,7 +73,7 @@ const getReviewAnalysis = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { analysis: analysisResult },
+        analysisResult,
         "Review analysis generated successfully",
       ),
     );
