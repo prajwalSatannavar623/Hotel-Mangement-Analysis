@@ -1,5 +1,50 @@
 import express from "express";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+
+import { passport } from "./config/passport.js";
+import { ensureAuthenticated } from "./middlewares/auth.middleware.js";
 
 const app = express();
+
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    optionsSuccessStatus: 200,
+    credentials: true,
+  }),
+);
+
+app.set("trust proxy", 1);
+
+app.use(express.json({ limit: "16kb" }));
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+app.use(express.static("public"));
+app.use(cookieParser());
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      httpOnly: true,
+      secure: process.env.MODE === "production", // requires HTTPS in prod
+    },
+  }),
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+import authRoute from "./routes/auth.route.js";
+import userRoute from "./routes/user.route.js";
+
+app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/user", userRoute);
 
 export { app };
