@@ -10,7 +10,7 @@ const inputSchema = new Schema(
       {
         imageUrl: {
           type: String,
-          required,
+          required: true,
         },
       },
     ],
