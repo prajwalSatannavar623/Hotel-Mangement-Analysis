@@ -122,6 +122,61 @@ const getReviewAnalysis = asyncHandler(async (req, res) => {
     );
 });
 
-const getUserHistory = asyncHandler(async (req, res) => {});
+const getUserHistory = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
 
-export { getReviewAnalysis };
+  if (!userId) {
+    throw new ApiError(404, "User Not Fount");
+  }
+
+  const InputHistory = await Input.find({ user: userId }).select("_id review");
+
+  if (!InputHistory) {
+    return res.status(200).json(new ApiResponse(200, [], "No History"));
+  } else {
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, InputHistory, "User history fetched successfuly"),
+      );
+  }
+});
+
+const getParticularHistory = asyncHandler(async (req, res) => {
+  const inputId = req.params.inputId;
+
+  if (!inputId) {
+    throw new ApiError(400, "No inputId Found");
+  }
+
+  const input = await Input.findById({ _id: inputId });
+
+  if (!input) {
+    throw new ApiError(404, "Data not Found");
+  }
+
+  const InputBelongsToUser = input?.user.toString() === req.user._id.toString();
+
+  if (!InputBelongsToUser) {
+    throw new ApiError(404, "Unauthorized request");
+  }
+
+  const result = await Result.findOne({ input: inputId });
+
+  if (!result) {
+    throw new ApiError(500, "Failed to fetch result history");
+  }
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        input: input,
+        result: result,
+      },
+      "Input history fetched successfully",
+    ),
+  );
+});
+
+export { getReviewAnalysis, getUserHistory, getParticularHistory };
