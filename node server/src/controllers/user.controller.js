@@ -3,7 +3,10 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 
 import { uploadOnCloudinary } from "../services/cloudinary.service.js";
-import { response } from "express";
+
+import { Input } from "../models/input.model.js";
+import { Result } from "../models/result.model.js";
+import mongoose from "mongoose";
 
 const getReviewAnalysis = asyncHandler(async (req, res) => {
   const { review } = req.body;
@@ -38,6 +41,7 @@ const getReviewAnalysis = asyncHandler(async (req, res) => {
     fastApiModelResponse = await fetch(process.env.FASTAPI_SERVER_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: controller.signal,
       body: JSON.stringify({
         review: review,
         photoUrls: photoUrls,
@@ -68,15 +72,56 @@ const getReviewAnalysis = asyncHandler(async (req, res) => {
   // success
   const analysisResult = await fastApiModelResponse.json();
 
+  // atomicity:
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    // saving user's history:
+    const savedInput = await Input.create(
+      [
+        {
+          review: review,
+          images: photoUrls.map((url) => ({ imageUrl: url })),
+          user: req.user._id,
+        },
+      ],
+      { session: session },
+    );
+
+    if (!savedInput) {
+      throw new ApiError(500, "Failed saving Input history");
+    }
+
+    // saving Results:
+    const resultSchema = await Result.create(
+      [
+        {
+          input: savedInput[0]._id,
+          aspects: analysisResult.data?.aspects || [],
+        },
+      ],
+      { session: session },
+    );
+
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+  } finally {
+    session.endSession();
+  }
+
   return res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        analysisResult,
+        analysisResult.data,
         "Review analysis generated successfully",
       ),
     );
 });
+
+const getUserHistory = asyncHandler(async (req, res) => {});
 
 export { getReviewAnalysis };
