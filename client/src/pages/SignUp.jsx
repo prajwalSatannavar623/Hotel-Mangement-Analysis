@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 
 import Input from "../components/Input.jsx";
@@ -17,6 +17,23 @@ const SignUp = () => {
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Handling url errors:
+  const urlErrorKey = searchParams.get("error");
+  const errorMessages = {
+    GoogleAuthFailed: "Google authentication failed. Please try again.",
+    Unauthorized: "We couldn't verify your Google account. Please try again.",
+    SessionCreationFailed:
+      "Failed to establish a secure session. Please sign in again.",
+  };
+
+  const urlErrorMessage = urlErrorKey
+    ? errorMessages[urlErrorKey] ||
+      "An unexpected error occurred during sign-in."
+    : null;
+
+  const displayError = error || urlErrorMessage;
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +77,7 @@ const SignUp = () => {
     <>
       <div className="flex flex-col items-center justify-center gap-2 w-full h-screen bg-app text-text-main">
         <h1 className="text-heading font-bold"> Sign Up </h1>
-        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {error && <ErrorMessage>{displayError}</ErrorMessage>}
         {isLoading && <LodingState>Signing up</LodingState>}
         <form
           className="w-full flex flex-col justify-center items-center gap-2"
@@ -97,7 +114,7 @@ const SignUp = () => {
           ></Input>
 
           <Button type="submit" variant="secondary" className="w-1/2">
-            Continue to Signup
+            Continue
           </Button>
         </form>
         <Button
