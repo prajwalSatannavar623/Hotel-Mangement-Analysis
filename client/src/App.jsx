@@ -1,9 +1,8 @@
+import router from "./routes/app.route.jsx";
+import { RouterProvider } from "react-router-dom";
+
 const App = () => {
-  return (
-    <div className="bg-amber-500 text-white flex items-center justify-center">
-      App
-    </div>
-  );
+  return <RouterProvider router={router}></RouterProvider>;
 };
 
 export default App;

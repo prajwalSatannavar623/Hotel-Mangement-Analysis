@@ -7,6 +7,8 @@ import cookieParser from "cookie-parser";
 import { passport } from "./config/passport.js";
 import { ensureAuthenticated } from "./middlewares/auth.middleware.js";
 
+import { globalErrorHandler } from "../src/utils/globalErrorHandler.js";
+
 const app = express();
 
 app.use(
@@ -46,5 +48,7 @@ import userRoute from "./routes/user.route.js";
 
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/users", userRoute);
+
+app.use(globalErrorHandler);
 
 export { app };

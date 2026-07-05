@@ -1,1 +1,83 @@
 @import "tailwindcss";
+
+/* =========================================================
+   1. DYNAMIC THEME VARIABLES (Light Mode Default)
+========================================================= */
+
+:root {
+  /* Background Layers */
+  --bg-app: #f8fafc; /* Main page background */
+  --bg-surface: #ffffff; /* Cards, tables, sidebar */
+  --bg-elevated: #f1f5f9; /* Dropdowns, modals, hover states */
+  --border-subtle: #e2e8f0; /* Divider & border lines */
+
+  /* Text Colors (Integrated directly into themes) */
+  --text-main: #0f172a; /* Primary headings & body */
+  --text-muted: #64748b; /* Secondary text, labels, timestamps */
+  --text-inverse: #ffffff; /* Text on solid primary buttons */
+}
+
+/* =========================================================
+   2. DARK THEME OVERRIDES (.dark class on <html>)
+========================================================= */
+.dark {
+  /* Background Layers */
+  --bg-app: #0b0f19; /* Deep midnight slate */
+  --bg-surface: #111827; /* Dark slate cards */
+  --bg-elevated: #1e293b; /* Elevated dark modals */
+  --border-subtle: #334155; /* Dark border lines */
+
+  /* Text Colors (Automatically invert for dark mode) */
+  --text-main: #f8fafc; /* Crisp white headings & body */
+  --text-muted: #94a3b8; /* Soft cool grey for secondary text */
+  --text-inverse: #0f172a; /* Dark text if needed on light badges */
+}
+
+/* =========================================================
+   3. TAILWIND v4 THEME MAPPING
+========================================================= */
+@theme {
+  /* Static colors that never flip */
+  --color-static-white: #ffffff;
+  --color-static-black: #000000;
+  --color-static-muted: #334155;
+
+  /* Wire up Dynamic Backgrounds */
+  --color-app: var(--bg-app);
+  --color-surface: var(--bg-surface);
+  --color-elevated: var(--bg-elevated);
+  --color-border-subtle: var(--border-subtle);
+
+  /* Wire up Dynamic Text Colors */
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
+  --color-text-inverse: var(--text-inverse);
+
+  /* Primary Brand: Hospitality Sapphire (3 Shades) */
+  --color-primary-light: #818cf8; /* Subtle accents, badges, hover states */
+  --color-primary: #4f46e5; /* Main interactive buttons & links */
+  --color-primary-dark: #3730a3; /* Active/pressed states & dark headers */
+
+  /* Secondary Brand: Executive Gold (3 Shades) */
+  --color-secondary-light: #fde047; /* Highlights, 5-star badges */
+  --color-secondary: #eab308; /* VIP status, warning triggers */
+  --color-secondary-dark: #a16207; /* Deep bronze accents */
+
+  /* Error and success colors */
+  --color-error: #dc3545;
+  --color-success: #28a745;
+
+  /* Custom Text Sizes */
+  --text-tiny: 0.75rem; /* 12px - Badges & metadata */
+  --text-base: 1rem; /* 16px - Standard body text */
+  --text-medium: 1.125rem; /* 18px - Lead paragraphs & subheads */
+  --text-large: 1.25rem; /* 20px - Card titles & section headers */
+  --text-heading: 2.25rem; /* 36px - Page titles & major headings */
+  --text-hero: 3.75rem; /* 60px - Dashboard KPI stats & hero banners */
+
+  /* Custom Font Weights (Use these if you want class names like font-heading) */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+}
