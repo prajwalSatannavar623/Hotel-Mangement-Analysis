@@ -102,35 +102,24 @@ const initiateGoogleAuth = passport.authenticate("google", {
 // google redirects back
 const handleGoogleCallback = asyncHandler(async (req, res, next) => {
   passport.authenticate("google", (err, user, info) => {
+    const FRONTEND_URL = process.env.CLIENT_URL || "http://localhost:5173";
+
     if (err) {
-      return next(
-        new ApiError(500, err?.message || "Google authentication failed"),
-      );
+      return res.redirect(`${FRONTEND_URL}/signin?error=GoogleAuthFailed`);
     }
 
     if (!user) {
-      return next(new ApiError(401, info?.message || "Login failed!"));
+      return res.redirect(`${FRONTEND_URL}/signin?error=Unauthorized`);
     }
 
-    // Log the user in to establish the session
     req.login(user, (loginErr) => {
       if (loginErr) {
-        return next(
-          new ApiError(500, "Failed to create session after Google login", [
-            loginErr.message,
-          ]),
+        return res.redirect(
+          `${FRONTEND_URL}/signin?error=SessionCreationFailed`,
         );
       }
 
-      return res
-        .status(200)
-        .json(
-          new ApiResponse(
-            200,
-            { user: sanitizeUser(user) },
-            "User logged in successfully",
-          ),
-        );
+      return res.redirect(`${FRONTEND_URL}/dashboard`);
     });
   })(req, res, next);
 });

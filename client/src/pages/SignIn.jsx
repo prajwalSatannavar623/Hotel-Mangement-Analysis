@@ -48,7 +48,11 @@ const SignIn = () => {
     }
   };
 
-  const handleGoogleLogin = () => {};
+  const handleGoogleSignIn = async () => {
+    const BACKEND_URL = import.meta.env.VITE_API_BASE_URL;
+
+    window.location.href = `${BACKEND_URL}/auth/google`;
+  };
 
   return (
     <>
@@ -72,7 +76,7 @@ const SignIn = () => {
           ></Input>
 
           <Input
-            label={"password"}
+            label={"Password"}
             name={"password"}
             type="password"
             value={password}
@@ -93,7 +97,7 @@ const SignIn = () => {
         </form>
         <Button
           type="button"
-          onClick={handleGoogleLogin}
+          onClick={handleGoogleSignIn}
           className="w-1/2 relative"
           disabled={isLoading}
         >
