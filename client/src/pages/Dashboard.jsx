@@ -1,8 +1,14 @@
-import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { MdDarkMode } from "react-icons/md";
+import { CiLight } from "react-icons/ci";
+
+import { toggleTheme } from "../slices/themeSlice.js";
 
 const Dashboard = () => {
-  const [theme, setTheme] = useState("Dark");
+  const theme = useSelector((state) => state.theme.theme);
+  console.log(theme);
+  const dispatch = useDispatch();
 
   const getNavStyle = ({ isActive }) =>
     `flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
@@ -11,6 +17,9 @@ const Dashboard = () => {
         : "text-text-muted hover:bg-elevated hover:text-text-main"
     }`;
 
+  const handleThemeToggle = () => {
+    dispatch(toggleTheme());
+  };
   return (
     <div className="flex bg-app w-full min-h-screen text-text-main font-regular">
       {/* Aside */}
@@ -72,13 +81,11 @@ const Dashboard = () => {
           {/* Theme Button */}
           <div className="flex items-center gap-4">
             <button
-              onClick={() =>
-                setTheme((prev) => (prev === "Dark" ? "Light" : "Dark"))
-              }
+              onClick={handleThemeToggle}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-text-main
                border border-border-subtle text-text-inverse text-sm hover:cursor-pointer font-medium"
             >
-              {theme}
+              {theme === "dark" ? <CiLight /> : <MdDarkMode />}
             </button>
           </div>
         </header>
