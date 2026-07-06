@@ -51,13 +51,9 @@ const SignUp = () => {
         fullName,
       });
 
-      if (response.data.success) {
-        // set values to authStore
-        dispatch(
-          setCredentials({
-            user: response.data.user,
-          }),
-        );
+      if (response.data?.success) {
+        const loggedInUser = response.data.data.user;
+        dispatch(setCredentials(loggedInUser));
 
         navigate("/dashboard");
       }

@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import { apiClient } from "../../api/axios.client.js";
 import { setActiveResult } from "../../slices/activeResultSlice.js";
@@ -12,6 +12,7 @@ import Button from "../../components/Button.jsx";
 const Results = () => {
   const { resultId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const results = useSelector((state) => state.results.results);
 
@@ -19,14 +20,22 @@ const Results = () => {
   const [error, setError] = useState(null);
   const [activeEvidence, setActiveEvidence] = useState(null);
 
+  const handleBackButton = () => {
+    dispatch(setActiveResult(null));
+
+    navigate("/dashboard/", { replace: true });
+  };
+
   useEffect(() => {
     if (!results || results._id !== resultId) {
       const fetchResultById = async () => {
         setIsloading(true);
         setError(null);
+        console.log("retry fetching");
         try {
           const response = await apiClient.get(`/users/results/${resultId}`);
           if (response.data?.success) {
+            console.log(response.data.data);
             dispatch(setActiveResult(response.data.data));
           }
         } catch (error) {
@@ -71,7 +80,9 @@ const Results = () => {
     );
   }
 
-  const aspects = results.aspects || [];
+  if (!results) return null;
+
+  const aspects = results?.aspects || [];
   const reviewText = results.input?.review;
 
   // calculate
@@ -91,12 +102,13 @@ const Results = () => {
             Review Analysis Report
           </h1>
         </div>
-        <Link
-          to="/dashboard/upload"
-          className="px-4 py-2 bg-surface hover:bg-border-subtle text-sm font-medium rounded-md border border-border-subtle transition-colors text-center"
+        <button
+          onClick={handleBackButton}
+          type="button"
+          className="px-4 py-2 bg-surface hover:bg-border-subtle text-sm font-medium rounded-md border border-border-subtle transition-colors text-center cursor-pointer"
         >
-          + Analyze Another Review
-        </Link>
+          Back to Analyze
+        </button>
       </div>
 
       {/* Overview */}

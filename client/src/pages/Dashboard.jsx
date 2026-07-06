@@ -60,9 +60,6 @@ const Dashboard = () => {
         {/* Profile overview */}
         <div className="p-4 border-t border-border-subtle">
           <div className="p-3 rounded-xl bg-elevated flex items-center gap-3">
-            {/* <div className="w-10 h-10 rounded-full bg-primary-light/20 border border-secondary flex items-center justify-center text-secondary font-bold">
-              <img src={user.avatarUrl} alt={"avatar image"} />
-            </div> */}
             {user.avatarUrl ? (
               <img
                 src={user.avatarUrl}

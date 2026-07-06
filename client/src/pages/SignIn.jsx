@@ -50,12 +50,9 @@ const SignIn = () => {
       });
 
       if (response?.data?.success) {
-        // set values to authStore:
-        dispatch(
-          setCredentials({
-            user: response.data.user,
-          }),
-        );
+        const loggedInUser = response.data.data.user;
+        dispatch(setCredentials(loggedInUser));
+
         navigate("/dashboard");
       }
     } catch (error) {
