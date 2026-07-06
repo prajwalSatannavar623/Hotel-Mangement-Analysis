@@ -1,7 +1,14 @@
 import { Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = () => {
-  // logics for protected route
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
+  if (!isAuthenticated) {
+    return <Navigate to="/signin" replace />;
+  }
+
   return <Outlet />;
 };
 

@@ -14,21 +14,24 @@ import Results from "../pages/Dashboard/Results.jsx";
 import Account from "../pages/Dashboard/Account.jsx";
 import History from "../pages/Dashboard/History.jsx";
 import HistoryDetail from "../pages/Dashboard/HistoryDetail.jsx";
+import RootLayout from "../pages/RootLayout.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path="/" element={<Home />} />
-      <Route path="/signup" element={<SignUp />} />
-      <Route path="/signin" element={<SignIn />} />
+      <Route element={<RootLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signin" element={<SignIn />} />
 
-      <Route path="/dashboard" element={<ProtectedRoute />}>
-        <Route element={<Dashboard />}>
-          <Route index element={<UploadForm />} />
-          <Route path="results" element={<Results />} />
-          <Route path="account" element={<Account />} />
-          <Route path="history" element={<History />} />
-          <Route path="history-details" element={<HistoryDetail />} />
+        <Route path="/dashboard" element={<ProtectedRoute />}>
+          <Route element={<Dashboard />}>
+            <Route index element={<UploadForm />} />
+            <Route path="results" element={<Results />} />
+            <Route path="account" element={<Account />} />
+            <Route path="history" element={<History />} />
+            <Route path="history-details" element={<HistoryDetail />} />
+          </Route>
         </Route>
       </Route>
     </>,

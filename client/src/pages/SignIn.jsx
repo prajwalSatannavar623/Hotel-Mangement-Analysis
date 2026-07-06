@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
+import { useDispatch } from "react-redux";
 
 import Input from "../components/Input.jsx";
 import Button from "../components/Button.jsx";
@@ -8,6 +9,7 @@ import ErrorMessage from "../components/ErrorMessage.jsx";
 import LodingState from "../components/LodingState.jsx";
 
 import { apiClient } from "../api/axios.client.js";
+import { setCredentials } from "../slices/authSlice.js";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -17,6 +19,7 @@ const SignIn = () => {
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const dispatch = useDispatch();
 
   // Handling url errors:
   const urlErrorKey = searchParams.get("error");
@@ -47,6 +50,12 @@ const SignIn = () => {
       });
 
       if (response?.data?.success) {
+        // set values to authStore:
+        dispatch(
+          setCredentials({
+            user: response.data.user,
+          }),
+        );
         navigate("/dashboard");
       }
     } catch (error) {

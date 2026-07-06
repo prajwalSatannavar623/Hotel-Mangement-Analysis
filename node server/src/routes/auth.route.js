@@ -9,6 +9,7 @@ import {
   initiateGoogleAuth,
   handleGoogleCallback,
   logoutUser,
+  getCurrentUser,
 } from "../controllers/auth.controller.js";
 
 const router = Router();
@@ -21,5 +22,8 @@ router.route("/logout").post(ensureAuthenticated, logoutUser);
 // google auth
 router.route("/google").get(initiateGoogleAuth);
 router.route("/google/callback").get(handleGoogleCallback);
+
+// self
+router.route("/me").get(ensureAuthenticated, getCurrentUser);
 
 export default router;

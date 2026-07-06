@@ -9,7 +9,7 @@ function sanitizeUser(user) {
   return {
     id: user._id,
     email: user.email,
-    name: user.name,
+    fulName: user.fullName,
     avatarUrl: user.avatarUrl,
   };
 }
@@ -159,10 +159,28 @@ const logoutUser = asyncHandler(async (req, res, next) => {
   });
 });
 
+// get me
+const getCurrentUser = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    throw new ApiError(401, "Unauthorized access. No active session found.");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { user: sanitizeUser(user) },
+        "User fetched Successfuly",
+      ),
+    );
+});
+
 export {
   registerUser,
   loginUser,
   handleGoogleCallback,
   initiateGoogleAuth,
   logoutUser,
+  getCurrentUser,
 };
