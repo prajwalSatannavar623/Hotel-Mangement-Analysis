@@ -4,7 +4,7 @@ import { photoUploadMiddleware } from "../middlewares/multer.middleware.js";
 import {
   getReviewAnalysis,
   getUserHistory,
-  getParticularHistory,
+  getParticularResult,
 } from "../controllers/user.controller.js";
 
 const router = Router();
@@ -17,7 +17,7 @@ router.route("/me/history").get(ensureAuthenticated, getUserHistory);
 
 // dynamic routes
 router
-  .route("/:inputId/history")
-  .get(ensureAuthenticated, getParticularHistory);
+  .route("/results/:resultId")
+  .get(ensureAuthenticated, getParticularResult);
 
 export default router;

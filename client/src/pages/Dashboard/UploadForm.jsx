@@ -1,12 +1,14 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdAddPhotoAlternate, MdClose } from "react-icons/md";
+import { useDispatch } from "react-redux";
 
 import Button from "../../components/Button";
 import ErrorMessage from "../../components/ErrorMessage";
 import LodingState from "../../components/LodingState";
 
 import { apiClient } from "../../api/axios.client.js";
+import { setActiveResult } from "../../slices/activeResultSlice.js";
 
 const UploadForm = () => {
   const [review, setReview] = useState("");
@@ -16,6 +18,7 @@ const UploadForm = () => {
 
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -43,8 +46,13 @@ const UploadForm = () => {
       );
 
       if (response.data.success) {
-        console.log(response.data);
-        navigate("/dashboard/results");
+        const resultData = response.data.data;
+        console.log(resultData);
+
+        // set values to the store
+        dispatch(setActiveResult(resultData));
+
+        navigate(`/dashboard/results/${resultData._id}`);
       }
     } catch (error) {
       if (error.response) {

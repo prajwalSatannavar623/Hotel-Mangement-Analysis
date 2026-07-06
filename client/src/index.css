@@ -64,8 +64,11 @@
   --color-secondary-dark: #a16207; /* Deep bronze accents */
 
   /* Error and success colors */
-  --color-error: #dc3545;
   --color-success: #28a745;
+  --color-success-dark: #218838;
+
+  --color-error: #dc3545;
+  --color-error-dark: #c82333;
 
   /* Custom Text Sizes */
   --text-tiny: 0.75rem; /* 12px - Badges & metadata */

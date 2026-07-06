@@ -27,7 +27,7 @@ const router = createBrowserRouter(
         <Route path="/dashboard" element={<ProtectedRoute />}>
           <Route element={<Dashboard />}>
             <Route index element={<UploadForm />} />
-            <Route path="results" element={<Results />} />
+            <Route path="results/:resultId" element={<Results />} />
             <Route path="account" element={<Account />} />
             <Route path="history" element={<History />} />
             <Route path="history-details" element={<HistoryDetail />} />

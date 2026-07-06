@@ -17,6 +17,7 @@ const Button = ({
     secondary: "bg-secondary hover:bg-secondary-dark text-static-white",
     outline: "bg-static-black text-static-white hover:bg-black/85",
     basic: "bg-static-white text-static-black border border-static-muted",
+    logout: "bg-error text-static-white hover:bg-error-dark",
   };
 
   if (to && type !== "submit") {

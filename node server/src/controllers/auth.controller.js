@@ -9,7 +9,7 @@ function sanitizeUser(user) {
   return {
     id: user._id,
     email: user.email,
-    fulName: user.fullName,
+    fullName: user.fullName,
     avatarUrl: user.avatarUrl,
   };
 }

@@ -7,7 +7,8 @@ import { toggleTheme } from "../slices/themeSlice.js";
 
 const Dashboard = () => {
   const theme = useSelector((state) => state.theme.theme);
-  console.log(theme);
+  const user = useSelector((state) => state.auth.user);
+
   const dispatch = useDispatch();
 
   const getNavStyle = ({ isActive }) =>
@@ -59,12 +60,27 @@ const Dashboard = () => {
         {/* Profile overview */}
         <div className="p-4 border-t border-border-subtle">
           <div className="p-3 rounded-xl bg-elevated flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary-light/20 border border-secondary flex items-center justify-center text-secondary font-bold">
-              P
-            </div>
+            {/* <div className="w-10 h-10 rounded-full bg-primary-light/20 border border-secondary flex items-center justify-center text-secondary font-bold">
+              <img src={user.avatarUrl} alt={"avatar image"} />
+            </div> */}
+            {user.avatarUrl ? (
+              <img
+                src={user.avatarUrl}
+                alt={"A"}
+                className="w-10 h-10 rounded-full border border-secondary flex items-center justify-center text-secondary font-bold object-cover"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-primary-light/20 border border-secondary flex items-center justify-center text-text-main font-bold">
+                {user.fullName?.charAt(0).toUpperCase() || "?"}
+              </div>
+            )}
             <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-bold truncate">Name</span>
-              <span className="text-tiny text-text-muted truncate">email</span>
+              <span className="text-sm font-bold truncate">
+                {user.fullName}
+              </span>
+              <span className="text-tiny text-text-muted truncate">
+                {user.email}
+              </span>
             </div>
           </div>
         </div>

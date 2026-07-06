@@ -76,6 +76,8 @@ const getReviewAnalysis = asyncHandler(async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
+  let createdResult;
+
   try {
     // saving user's history:
     const savedInput = await Input.create(
@@ -104,22 +106,34 @@ const getReviewAnalysis = asyncHandler(async (req, res) => {
       { session: session },
     );
 
+    if (!resultSchema || resultSchema.length === 0) {
+      throw new ApiError(500, "Failed saving Result schema");
+    }
+
+    createdResult = resultSchema[0];
+
     await session.commitTransaction();
   } catch (error) {
     await session.abortTransaction();
+    throw new ApiError(
+      500,
+      error?.message || "Failed to save analysis to database",
+    );
   } finally {
     session.endSession();
   }
 
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        analysisResult.data,
-        "Review analysis generated successfully",
-      ),
-    );
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        _id: createdResult._id,
+        inputId: createdResult.input,
+        aspects: analysisResult.data?.aspects || [],
+      },
+      "Review analysis generated successfully",
+    ),
+  );
 });
 
 const getUserHistory = asyncHandler(async (req, res) => {
@@ -142,41 +156,29 @@ const getUserHistory = asyncHandler(async (req, res) => {
   }
 });
 
-const getParticularHistory = asyncHandler(async (req, res) => {
-  const inputId = req.params.inputId;
+const getParticularResult = asyncHandler(async (req, res) => {
+  const resultId = req.params.resultId;
 
-  if (!inputId) {
-    throw new ApiError(400, "No inputId Found");
+  if (!resultId) {
+    throw new ApiError(400, "No resultId Found");
   }
 
-  const input = await Input.findById({ _id: inputId });
+  const result = await Result.findById(resultId).populate("input");
 
-  if (!input) {
-    throw new ApiError(404, "Data not Found");
+  if (!result) {
+    throw new ApiError(404, "Result NOT Found");
   }
 
-  const InputBelongsToUser = input?.user.toString() === req.user._id.toString();
+  const resultBelongsToUser =
+    result.input?.user.toString() === req.user._id.toString();
 
-  if (!InputBelongsToUser) {
+  if (!resultBelongsToUser) {
     throw new ApiError(404, "Unauthorized request");
   }
 
-  const result = await Result.findOne({ input: inputId });
-
-  if (!result) {
-    throw new ApiError(500, "Failed to fetch result history");
-  }
-
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      {
-        input: input,
-        result: result,
-      },
-      "Input history fetched successfully",
-    ),
-  );
+  return res
+    .status(200)
+    .json(new ApiResponse(200, result, "Result fetched successfully"));
 });
 
-export { getReviewAnalysis, getUserHistory, getParticularHistory };
+export { getReviewAnalysis, getUserHistory, getParticularResult };
