@@ -11,6 +11,7 @@ function sanitizeUser(user) {
     email: user.email,
     fullName: user.fullName,
     avatarUrl: user.avatarUrl,
+    emailVerified: user.emailVerified,
   };
 }
 
