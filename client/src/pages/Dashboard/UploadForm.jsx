@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MdAddPhotoAlternate, MdClose } from "react-icons/md";
 
 import Button from "../../components/Button";
@@ -14,6 +15,7 @@ const UploadForm = () => {
   const [error, setError] = useState(null);
 
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -41,6 +43,11 @@ const UploadForm = () => {
       );
 
       console.log(response.data);
+      if (response.data.success) {
+        navigate("/dashboard/results", {
+          state: response.data.aspects,
+        });
+      }
     } catch (error) {
       if (error.response) {
         const backendErrorMessage =
