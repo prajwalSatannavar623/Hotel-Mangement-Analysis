@@ -63,7 +63,7 @@ const Account = () => {
             {user.fullName?.charAt(0).toUpperCase() || "?"}
           </div>
         )}
-        <div className="flex flex-col bg-surface w-full p-3 rounded-3xl justify-center overflow-y-clip border-1 border-border-subtle">
+        <div className="flex flex-col bg-surface w-full p-3 rounded-3xl justify-center overflow-y-clip border-2 border-border-subtle">
           <p className="text-heading font-bold">{user.fullName || "Guest"}</p>
           <p className="text-medium text-text-muted">
             <i>@ {user.email || "no email"}</i>
