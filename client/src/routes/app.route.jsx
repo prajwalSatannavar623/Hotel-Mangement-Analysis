@@ -7,7 +7,12 @@ import {
 import Home from "../pages/Home.jsx";
 import SignUp from "../pages/SignUp.jsx";
 import SignIn from "../pages/SignIn.jsx";
+import ProtectedRoute from "../pages/ProtectedRoute/ProtectedRoute.jsx";
 import Dashboard from "../pages/Dashboard.jsx";
+import UploadForm from "../pages/Dashboard/UploadForm.jsx";
+import Account from "../pages/Dashboard/Account.jsx";
+import History from "../pages/Dashboard/History.jsx";
+import HistoryDetail from "../pages/Dashboard/HistoryDetail.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -16,7 +21,14 @@ const router = createBrowserRouter(
       <Route path="/signup" element={<SignUp />} />
       <Route path="/signin" element={<SignIn />} />
 
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/dashboard" element={<ProtectedRoute />}>
+        <Route element={<Dashboard />}>
+          <Route index element={<UploadForm />} />
+          <Route path="account" element={<Account />} />
+          <Route path="history" element={<History />} />
+          <Route path="history-details" element={<HistoryDetail />} />
+        </Route>
+      </Route>
     </>,
   ),
 );
