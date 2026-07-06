@@ -24,10 +24,12 @@ const RootLayout = () => {
         const response = await apiClient.get("/auth/me");
         if (response.data?.success) {
           dispatch(setCredentials({ user: response.data.user }));
+          console.log("User is still authenticated");
         }
       } catch (error) {
         // If no valid session cookie exists, ensure auth state is reset
         dispatch(logoutUser());
+        console.log("User is not authenticated");
         console.error(error);
       }
     };

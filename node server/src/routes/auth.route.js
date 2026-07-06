@@ -24,6 +24,6 @@ router.route("/google").get(initiateGoogleAuth);
 router.route("/google/callback").get(handleGoogleCallback);
 
 // self
-router.route("/me").get(ensureAuthenticated, getCurrentUser);
+router.route("/me").get(getCurrentUser);
 
 export default router;

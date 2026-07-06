@@ -170,7 +170,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { user: sanitizeUser(user) },
+        { user: sanitizeUser(req.user) },
         "User fetched Successfuly",
       ),
     );

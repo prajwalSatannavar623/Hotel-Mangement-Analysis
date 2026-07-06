@@ -42,11 +42,9 @@ const UploadForm = () => {
         formData,
       );
 
-      console.log(response.data);
       if (response.data.success) {
-        navigate("/dashboard/results", {
-          state: response.data.aspects,
-        });
+        console.log(response.data);
+        navigate("/dashboard/results");
       }
     } catch (error) {
       if (error.response) {
