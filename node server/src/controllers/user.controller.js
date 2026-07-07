@@ -37,6 +37,9 @@ const getReviewAnalysis = asyncHandler(async (req, res) => {
 
   let fastApiModelResponse;
 
+  console.log("FASTAPI_SERVER_URL", process.env.FASTAPI_SERVER_URL);
+  console.log("sending review to fastApi server");
+
   try {
     fastApiModelResponse = await fetch(process.env.FASTAPI_SERVER_URL, {
       method: "POST",
@@ -49,6 +52,7 @@ const getReviewAnalysis = asyncHandler(async (req, res) => {
     });
   } catch (networkError) {
     // network error
+    console.error("Error connecting to fastApi server:", networkError);
     throw new ApiError(
       503,
       networkError?.message ||
@@ -61,6 +65,8 @@ const getReviewAnalysis = asyncHandler(async (req, res) => {
   if (!fastApiModelResponse.ok) {
     const errorData = await fastApiModelResponse.json().catch(() => null);
 
+    console.error("Error response from fastApi server:", errorData);
+
     const errorMessage =
       errorData?.detail ||
       errorData?.message ||
@@ -68,6 +74,8 @@ const getReviewAnalysis = asyncHandler(async (req, res) => {
 
     throw new ApiError(fastApiModelResponse.status, errorMessage);
   }
+
+  console.log("Received response from fastApi server:");
 
   // success
   const analysisResult = await fastApiModelResponse.json();
