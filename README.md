@@ -95,11 +95,6 @@ Detailed docs live in [`docs/`](./docs):
 
 Full setup details (Google OAuth redirect URI, MongoDB IP allowlisting, etc.) are in [`docs/infrastructure.md`](./docs/infrastructure.md#local-development-setup).
 
-## Known Issues / Roadmap
-
-Tracked in more detail across the docs above, notably:
-
-- Session cookies aren't yet configured for cross-origin use (`sameSite`) — needs a fix before the Vercel + Render production split goes live ([`infrastructure.md`](./docs/infrastructure.md#production-considerations--todo))
 
 ## Contributing
 
