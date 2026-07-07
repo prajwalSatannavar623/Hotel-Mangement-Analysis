@@ -5,6 +5,7 @@ import {
   getReviewAnalysis,
   getUserHistory,
   getParticularResult,
+  getResultByInput,
 } from "../controllers/user.controller.js";
 
 const router = Router();
@@ -16,6 +17,7 @@ router
 router.route("/me/history").get(ensureAuthenticated, getUserHistory);
 
 // dynamic routes
+router.route("/history/:inputId").get(ensureAuthenticated, getResultByInput);
 router
   .route("/results/:resultId")
   .get(ensureAuthenticated, getParticularResult);

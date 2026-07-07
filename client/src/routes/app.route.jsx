@@ -30,7 +30,7 @@ const router = createBrowserRouter(
             <Route path="results/:resultId" element={<Results />} />
             <Route path="account" element={<Account />} />
             <Route path="history" element={<History />} />
-            <Route path="history-details" element={<HistoryDetail />} />
+            <Route path="history/:inputId" element={<HistoryDetail />} />
           </Route>
         </Route>
       </Route>

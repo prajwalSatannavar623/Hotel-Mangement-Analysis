@@ -184,4 +184,30 @@ const getParticularResult = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, result, "Result fetched successfully"));
 });
 
-export { getReviewAnalysis, getUserHistory, getParticularResult };
+const getResultByInput = asyncHandler(async (req, res) => {
+  const inputId = req.params.inputId;
+
+  if (!inputId) {
+    throw new ApiError(400, "No data Found");
+  }
+
+  const result = await Result.find({ input: inputId }).populate(
+    "input",
+    "_id review images",
+  );
+
+  if (!result) {
+    throw new ApiError(500, "Results not Found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, result, "Result fetched successfully"));
+});
+
+export {
+  getReviewAnalysis,
+  getUserHistory,
+  getParticularResult,
+  getResultByInput,
+};

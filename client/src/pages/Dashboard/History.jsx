@@ -76,7 +76,7 @@ const History = () => {
             return (
               <div
                 key={history._id}
-                onClick={() => navigate(`/dashboard/results/${history._id}`)}
+                onClick={() => navigate(`/dashboard/history/${history._id}`)}
                 className="w-full md:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-2.5rem)/3)] group flex flex-col justify-between p-5 bg-surface border border-border-subtle rounded-xl cursor-pointer transition-all duration-200 hover:shadow-lg hover:border-primary/50 min-h-40"
               >
                 <div className="flex justify-between items-center mb-3">
