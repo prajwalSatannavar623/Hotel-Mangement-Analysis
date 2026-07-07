@@ -31,11 +31,13 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     store: MongoStore.create({ mongoUrl: process.env.MONGO_DB_URL }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       httpOnly: true,
       secure: true,
+      sameSite: "none",
     },
   }),
 );
