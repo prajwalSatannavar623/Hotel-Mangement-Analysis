@@ -48,7 +48,7 @@ Middleware is registered in this order:
 3. **Body parsers** — `express.json({ limit: "16kb" })`, `express.urlencoded({ extended: true, limit: "16kb" })`. Note: the 16kb limit applies to JSON/urlencoded bodies; file uploads bypass this via Multer's separate `multipart/form-data` handling.
 4. **`express.static("public")`** — serves the `public/` directory (also where Multer temporarily writes uploaded files, under `public/temp`).
 5. **`cookieParser()`**
-6. **`express-session`**, backed by `connect-mongo` (`MongoStore`) — persists sessions in MongoDB Atlas rather than in-memory, so sessions survive server restarts and work across multiple Node instances. Cookie: `maxAge` 7 days, `httpOnly: true`, `secure` only in production (`process.env.MODE === "production"`).
+6. **`express-session`**, backed by `connect-mongo` (`MongoStore`) — persists sessions in MongoDB Atlas rather than in-memory, so sessions survive server restarts and work across multiple Node instances. Cookie: `maxAge` 7 days, `httpOnly: true`, `secure: true`.
 7. **`passport.initialize()`** + **`passport.session()`**
 8. **Routes**: `/api/v1/auth` → `authRoute`, `/api/v1/users` → `userRoute`
 9. **`globalErrorHandler`** — registered last, catches everything thrown/passed to `next(err)` upstream.

@@ -48,14 +48,14 @@ client/src/
 
 ```javascript
 export const apiClient = axios.create({
-  baseURL: "http://localhost:3000/api/v1",
-  timeout: 60000,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  timeout: 95000,
   withCredentials: true,
 });
 ```
 
 - **`withCredentials: true`** is required here — the backend uses session-cookie auth (Passport + `express-session`), not bearer tokens, so every request must carry the `connect.sid` cookie cross-requests (see [backend.md](./backend.md#authentication-configpassportjs)).
-- **`timeout: 60000`** (60s) mirrors the Node server's own 60s budget for the `/get-review-analysis` call to FastAPI (see [backend.md](./backend.md#timeout-budget)). This means the client will time out around the same moment the Node server would.
+- **`timeout: 95000`** (695) mirrors the Node server's own 60s budget for the `/get-review-analysis` call to FastAPI (see [backend.md](./backend.md#timeout-budget)). This means the client will time out around the same moment the Node server would.
 
 ---
 
@@ -88,9 +88,8 @@ flowchart TD
 | `/dashboard/history`           | `History`       | Protected | `GET /users/me/history`                |
 | `/dashboard/history/:inputId`  | `HistoryDetail` | Protected | `GET /users/history/:inputId`          |
 
-- **`RootLayout`** wraps every route — likely holds shared chrome (nav bar, theme toggle) and possibly an app-boot auth check (see `authSlice.isInitializing` below).
 - **`ProtectedRoute`** wraps the entire `/dashboard` subtree as a layout route (not per-page), so auth is checked once at the `/dashboard` boundary rather than duplicated per nested route.
-- **`Dashboard`** itself is also a layout route (renders an `<Outlet />` for its children) — likely the dashboard's persistent sidebar/nav wrapping `UploadForm`/`Results`/`Account`/`History`/`HistoryDetail`.
+- **`Dashboard`** itself is also a layout route (renders an `<Outlet />` for its children) - the dashboard's persistent sidebar/nav wrapping `UploadForm`/`Results`/`Account`/`History`/`HistoryDetail`.
 - Route-to-endpoint mapping above is inferred from naming and matches the Node API surface documented in [api-documentation.md](./api-documentation.md).
 
 ---
@@ -105,7 +104,7 @@ Three slices combined in `stores/store.js`:
 initialState: { user: null, isAuthenticated: false, isInitializing: true }
 ```
 
-- `isInitializing: true` by default strongly suggests an app-boot flow: on load, the app calls `GET /auth/me` to check for an existing session, and only after that resolves (success → `setCredentials`, failure → `logoutUser`) does `isInitializing` flip to `false`. This is the standard pattern to avoid a flash of "logged out" UI (or an incorrect redirect from `ProtectedRoute`) while the session check is in flight wired generally in top level route.
+- `isInitializing: true` by default strongly suggests an app-boot flow: on load, the app calls `GET /auth/me` to check for an existing session, and only after that resolves (success → `setCredentials`, failure → `logoutUser`) does `isInitializing` flip to `false`. This is the standard pattern to avoid a flash of "logged out" UI while the session check is in flight wired generally in top level route.
 - `logoutUser` action clears local auth state; dispatched after a successful `POST /auth/logout` call.
 
 ### `activeResultSlice`
@@ -116,7 +115,7 @@ initialState: {
 }
 ```
 
-- Holds a single "active" analysis result. Set by `UploadForm` immediately after a successful `POST /get-review-analysis` response, so `Results` (navigated to right after submission) can render immediately without an extra fetch — falling back to fetching via `GET /users/results/:resultId` only when a result is opened from `History` instead (i.e., when landing on `/dashboard/results/:resultId` directly without this state populated).
+- Holds a single "active" analysis result. Set by `UploadForm` immediately after a successful `POST /get-review-analysis` response, so `Results` (navigated to right after submission) can render immediately without an extra fetch - falling back to fetching via `GET /users/results/:resultId` only when a result is opened from `History` instead (i.e., when landing on `/dashboard/results/:resultId` directly without this state populated).
 
 ### `themeSlice`
 

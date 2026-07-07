@@ -1,6 +1,6 @@
 # Data Modeling
 
-This document describes the MongoDB data model used by the hotel review analysis platform. All collections are managed via **Mongoose** on the **Node server**, which owns the database connection to **MongoDB Atlas**. The **FastAPI server** does not talk to MongoDB directly — it receives data over internal API calls and returns analysis results, which the Node server persists.
+This document describes the MongoDB data model used by the hotel review analysis platform. All collections are managed via **Mongoose** on the **Node server**, which owns the database connection to **MongoDB Atlas**. The **FastAPI server** does not talk to MongoDB directly, it receives data over internal API calls and returns analysis results, which the Node server persists.
 
 ## Database
 
@@ -94,7 +94,7 @@ Represents an authenticated user of the platform. Supports both traditional emai
 - **Auth strategies:** A user document can represent:
   - An email/password account (`password` set, `google` empty)
   - A Google OAuth account (`google.id` set, `password` may be unset)
-  - Both, if the user links Google to an existing email/password account (implementation-dependent — document this once the linking flow is finalized)
+  - Both, if the user links Google to an existing email/password account.
 
 ### Indexes
 

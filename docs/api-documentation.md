@@ -2,8 +2,8 @@
 
 This document describes the public HTTP API surface of the platform. There are **two API surfaces**:
 
-1. **Node Server** — public-facing API consumed by the client. Handles authentication, session management, review submission orchestration, and history/result retrieval.
-2. **FastAPI Server** — internal microservice, not exposed to the client directly. Called server-to-server by the Node server to run the Qwen3 VLM 8B analysis.
+1. **Node Server** —> public-facing API consumed by the client. Handles authentication, session management, review submission orchestration, and history/result retrieval.
+2. **FastAPI Server** —> internal microservice, not exposed to the client directly. Called server-to-server by the Node server to run the Qwen3 VLM 8B analysis.
 
 Unless noted otherwise, all Node routes return a consistent success envelope via `ApiResponse`:
 
@@ -23,19 +23,17 @@ Errors are raised via `ApiError` and are caught by a global error-handling middl
 ```json
 {
   "success": false,
-  "status": 400,
+  "statusCode": 400,
   "message": "Human readable error message"
 }
 ```
-
-_(plus a `stack` field, only when `process.env.MODE === "development"`)_
 
 `globalErrorHandler` also special-cases two Mongoose error types before falling back to `err.statusCode || 500`:
 
 - **`CastError`** (e.g. malformed ObjectId in a route param) → `400`, message `"Invalid format for field: {field}"`
 - **MongoDB duplicate key error (`code: 11000`)** → `409`, message `"This {Field} is already taken. Please choose another."` (field name auto-capitalized from the offending unique index)
 
-> **Auth model:** Session-based auth via **Passport.js** (`passport-local` + `passport-google-oauth20`), backed by an Express session store persisted to MongoDB Atlas. The session cookie (`connect.sid`) is the credential — there is no bearer/JWT token in the current implementation. Protected routes use the `ensureAuthenticated` middleware, which checks `req.user` (populated by Passport's session deserialization).
+> **Auth model:** Session-based auth via **Passport.js** (`passport-local` + `passport-google-oauth20`), backed by an Express session store persisted to MongoDB Atlas. The session cookie (`connect.sid`) is the credential —> there is no bearer/JWT token in the current implementation. Protected routes use the `ensureAuthenticated` middleware, which checks `req.user` (populated by Passport's session deserialization).
 
 ---
 
@@ -141,7 +139,7 @@ Authenticates via Passport's `local` strategy, then establishes a session.
 | `500`  | `req.logout` failed          | `ApiError` with underlying error message in `errors[]`  |
 | `500`  | Session destroy in DB failed | `ApiError` with underlying error message in `errors[]`  |
 
-Cookie cleared: `connect.sid` (`httpOnly: true`, `secure` in production based on `process.env.MODE`).
+Cookie cleared: `connect.sid` (`httpOnly: true`, `secure: true`).
 
 ---
 
@@ -312,8 +310,6 @@ Fetches `Result` document(s) associated with a specific `Input`, with a partial 
 ## FastAPI Server (Internal)
 
 This is a **microservice, not exposed to the client**. It is called server-to-server, exclusively by the Node server's `getReviewAnalysis` controller (`POST <FASTAPI_SERVER_URL>` → mapped to `/api/v1/reviews/analyse` below).
-
-> **Auth note:** The route currently has no authentication/shared-secret check of its own — it trusts that network placement (private network / internal-only ingress) restricts who can reach it. See [infrastructure.md](./infrastructure.md) for how this boundary is enforced in deployment. Recommend adding a shared-secret header (e.g. `X-Internal-Key`) validated via a FastAPI dependency if the service is ever reachable from outside a trusted network.
 
 ### Model & Provider
 
