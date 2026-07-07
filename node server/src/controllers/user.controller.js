@@ -32,8 +32,8 @@ const getReviewAnalysis = asyncHandler(async (req, res) => {
 
   // fastApi server call:
   const controller = new AbortController();
-  // one minute window
-  const timeoutId = setTimeout(() => controller.abort(), 60000);
+  // one and half window
+  const timeoutId = setTimeout(() => controller.abort(), 95000);
 
   let fastApiModelResponse;
 
@@ -191,6 +191,13 @@ const getResultByInput = asyncHandler(async (req, res) => {
     throw new ApiError(400, "No data Found");
   }
 
+  const inputBelongsToUser = await Input.find({
+    $or: [{ _id: inputId }, { user: req.user._id }],
+  });
+
+  if (!inputBelongsToUser) {
+    throw new ApiError(404, "Unauthorized input request");
+  }
   const result = await Result.find({ input: inputId }).populate(
     "input",
     "_id review images",

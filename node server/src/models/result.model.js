@@ -48,6 +48,8 @@ const resultSchema = new Schema(
     input: {
       type: Schema.Types.ObjectId,
       ref: "Input",
+      required: true,
+      unique: true,
     },
     aspects: [aspectSchema],
   },

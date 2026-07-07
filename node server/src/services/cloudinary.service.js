@@ -44,34 +44,4 @@ const uploadOnCloudinary = async (localFilePath, retries = 3) => {
   }
 };
 
-// const deletingOldCloudinaryImages = async (publicID, retries = 3) => {
-//   let currentAttempt = 1;
-//   while (currentAttempt <= retries) {
-//     try {
-//       if (!publicID) return null;
-
-//       // delete from cloudinary
-//       const response = await cloudinary.uploader.destroy(publicID, {
-//         resource_type: "image",
-//       });
-
-//       return response;
-//     } catch (error) {
-//       console.error(
-//         `Attempt ${currentAttempt} failed, retrying again...`,
-//         error.message,
-//       );
-
-//       if (currentAttempt == retries) {
-//         console.error("Max retries reached. Deletion failed.");
-//         return null;
-//       }
-
-//       // wait for one second
-//       await new Promise((resolve) => setTimeout(resolve, 1000));
-//       currentAttempt += 1;
-//     }
-//   }
-// };
-
 export { uploadOnCloudinary };
