@@ -143,7 +143,10 @@ const getUserHistory = asyncHandler(async (req, res) => {
     throw new ApiError(404, "User Not Fount");
   }
 
-  const InputHistory = await Input.find({ user: userId }).select("_id review");
+  const InputHistory = await Input.find({ user: userId })
+    .sort({ createdAt: -1 })
+    .limit(20)
+    .lean();
 
   if (!InputHistory) {
     return res.status(200).json(new ApiResponse(200, [], "No History"));
