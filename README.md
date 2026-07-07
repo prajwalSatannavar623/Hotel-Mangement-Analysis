@@ -34,7 +34,7 @@ flowchart LR
 
 ## Repository Structure
 
-```
+```text
 .
 ├── client/            # React (Vite) frontend
 ├── node server/        # Express API — auth, users, orchestration
