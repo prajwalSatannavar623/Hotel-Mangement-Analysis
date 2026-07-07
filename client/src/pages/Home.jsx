@@ -9,7 +9,7 @@ const Home = () => {
     >
       <div>
         <h1 className="text-hero text-static-white text-shadow-static-muted font-black">
-          Hotel management
+          Hotelyzis
         </h1>
         <h3 className="text-large text-static-white font-bold bg-secondary rounded px-3 py-2 text-center">
           A tool for analysis of hotel reviews
