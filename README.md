@@ -23,14 +23,14 @@ flowchart LR
     FastAPI --> OpenRouter[(OpenRouter)]
 ```
 
-| Layer | Stack |
-|---|---|
-| **Client** | React, Vite, Redux Toolkit, React Router v6, Tailwind CSS v4 |
-| **Node Server** | Express, Passport (local + Google OAuth), Mongoose, `express-session` + `connect-mongo` |
-| **FastAPI Server** | FastAPI, httpx, Pydantic — orchestrates calls to **Qwen3 VLM 8B** via OpenRouter |
-| **Data** | MongoDB Atlas |
-| **Media** | Cloudinary |
-| **Hosting** | Vercel (client), Render (Node + FastAPI) |
+| Layer              | Stack                                                                                   |
+| ------------------ | --------------------------------------------------------------------------------------- |
+| **Client**         | React, Vite, Redux Toolkit, React Router v6, Tailwind CSS v4                            |
+| **Node Server**    | Express, Passport (local + Google OAuth), Mongoose, `express-session` + `connect-mongo` |
+| **FastAPI Server** | FastAPI, httpx, Pydantic — orchestrates calls to **Qwen3 VLM 8B** via OpenRouter        |
+| **Data**           | MongoDB Atlas                                                                           |
+| **Media**          | Cloudinary                                                                              |
+| **Hosting**        | Vercel (client), Render (Node + FastAPI)                                                |
 
 ## Repository Structure
 
@@ -47,13 +47,13 @@ flowchart LR
 
 Detailed docs live in [`docs/`](./docs):
 
-| Doc | Covers |
-|---|---|
-| [`docs/data-modeling.md`](./docs/data-modeling.md) | MongoDB schemas (`User`, `Input`, `Result`), relationships, and the aspect/evidence data shape |
+| Doc                                                        | Covers                                                                                                                                     |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| [`docs/data-modeling.md`](./docs/data-modeling.md)         | MongoDB schemas (`User`, `Input`, `Result`), relationships, and the aspect/evidence data shape                                             |
 | [`docs/api-documentation.md`](./docs/api-documentation.md) | Every HTTP endpoint on both servers — Node's public API and the internal FastAPI analysis endpoint, including the two-stage Qwen3 pipeline |
-| [`docs/backend.md`](./docs/backend.md) | Internal architecture of both servers — auth strategies, middleware, file uploads, shared utilities, error handling |
-| [`docs/infrastructure.md`](./docs/infrastructure.md) | Hosting, third-party services, environment variables, and local dev setup |
-| [`docs/frontend.md`](./docs/frontend.md) | Client architecture — routing, state management, API layer, styling/theming |
+| [`docs/backend.md`](./docs/backend.md)                     | Internal architecture of both servers — auth strategies, middleware, file uploads, shared utilities, error handling                        |
+| [`docs/infrastructure.md`](./docs/infrastructure.md)       | Hosting, third-party services, environment variables, and local dev setup                                                                  |
+| [`docs/frontend.md`](./docs/frontend.md)                   | Client architecture — routing, state management, API layer, styling/theming                                                                |
 
 ## Getting Started
 
@@ -69,6 +69,7 @@ Detailed docs live in [`docs/`](./docs):
 ### Setup
 
 1. Clone the repo and install dependencies:
+
    ```bash
    cd client && npm install
    cd ../"node server" && npm install
@@ -78,6 +79,7 @@ Detailed docs live in [`docs/`](./docs):
 2. Copy each `.env.sample` to `.env` in `client/`, `node server/`, and `fastApi server/`, and fill in your credentials. See [`docs/infrastructure.md`](./docs/infrastructure.md) for the full variable reference.
 
 3. Run each service in its own terminal:
+
    ```bash
    # Client
    cd client && npm run dev
@@ -98,9 +100,6 @@ Full setup details (Google OAuth redirect URI, MongoDB IP allowlisting, etc.) ar
 Tracked in more detail across the docs above, notably:
 
 - Session cookies aren't yet configured for cross-origin use (`sameSite`) — needs a fix before the Vercel + Render production split goes live ([`infrastructure.md`](./docs/infrastructure.md#production-considerations--todo))
-- Node ↔ FastAPI timeout budgets can mismatch under slow multimodal grounding calls ([`backend.md`](./docs/backend.md#timeout-budget))
-- The FastAPI service currently has no auth of its own and relies on network placement ([`api-documentation.md`](./docs/api-documentation.md))
-- A few smaller inconsistencies (response envelope field naming, an env var typo) are called out inline in the relevant docs
 
 ## Contributing
 
